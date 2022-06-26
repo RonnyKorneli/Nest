@@ -1,4 +1,5 @@
-#### Here you can follow our Final Project. The Project is still very much a work in Progress.
+#### Here you can follow our Final Project. 
+#### The Project is still very much a work in Progress.
 #### We organize our workflow by creating tickets in the Jira software.
 
 # Nest
@@ -63,7 +64,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/m
 ### Advanced Configuration
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
+https://ronnykorneli.github.io/Nest/
 ### Deployment
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
