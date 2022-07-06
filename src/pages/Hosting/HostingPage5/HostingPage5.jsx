@@ -1,9 +1,54 @@
 import "./hostingPage5.scss";
 import { IoMdPhotos } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
+import { housesContext } from "../../../Context/HousesContext.jsx";
+import axios from "axios";
 
 export default function HostingPage5() {
   let navigate = useNavigate();
+  const [file, setFile] = useState(null);
+  const [imageViewer, setImageViewer] = useState(0);
+  const [secondFile, setSecondFile] = useState(null);
+  const [objectId, setObjectId] = useState(""); 
+
+  const {houseId} = useContext(housesContext);
+  console.log('houseId :>> ', houseId);
+
+  function uploadFirstImage(e) {
+    setFile(e.target.files[0]);
+  }
+  useEffect(() => {
+    if (file) {
+      const formData = new FormData();
+      formData.append("selectedFile", file);
+      
+      axios.patch(`${process.env.REACT_APP_URL}/api/house/addImage/${houseId}`, formData)
+        .then((result) => {
+          setObjectId(result.data.fileID);
+          setImageViewer(imageViewer + 1);
+        })
+        .catch((err) => console.log("err :>> ", err));
+    }
+    return;
+  }, [file]);
+
+  function uploadImage(e) {
+    setSecondFile(e.target.files[0]);
+  }
+
+  useEffect(() => {
+    if (secondFile) {
+      const formData = new FormData();
+      formData.append("selectedFile", secondFile);
+      
+      axios.patch(`${process.env.REACT_APP_URL}/api/house/addSecondImage/${houseId}`, formData )
+        .then((result) => setImageViewer(imageViewer + 1))
+        .catch((err) => console.log("err :>> ", err));
+    }
+    return;
+  }, [secondFile]);
+
   return (
     <div className="hostingPage5">
       <div className="mainLeft">
@@ -12,16 +57,103 @@ export default function HostingPage5() {
       <div className="mainRight">
         <div className="subMainRight">
           <div className="subMainRightDiv">
-            <div className="uploadImageTop">
+            <div
+              className="uploadImageTop"
+              style={{ display: objectId ? "none" : "flex" }}
+            >
               <IoMdPhotos className="logo" />
               <div className="dragPhoto">Drag your photo here</div>
-              <div className="addPhoto">Add at least 5 photos</div>
+              <div className="addPhoto">Add maximum 5 photos</div>
             </div>
-            <div className="uploadImageBottom">
-              <button className="uploadFromDevice">
+
+            <div
+              className="uploadImageBottom"
+              style={{ display: objectId ? "none" : "flex" }}
+            >
+              <div className="uploadFromDevice">
                 Upload from your device
-              </button>
+                <input
+                  class="file_upload"
+                  onChange={uploadFirstImage}
+                  type="file"
+                />
+              </div>
             </div>
+            
+            {objectId && (
+              <div className="wrapper">
+                {imageViewer >= 1 && (
+                  <img
+                    src={`${process.env.REACT_APP_URL}/api/house/getImage/${objectId}/0`}
+                  />
+                )}
+
+                <h5>Add maximum five photos</h5>
+
+                <div className="subWrapperTop">
+                  <div className="firstImageBox">
+                    <IoMdPhotos className="logo" />
+                    <input
+                      onChange={uploadImage}
+                      type="file"
+                      class="file_upload"
+                    />
+                    {imageViewer > 1 && (
+                      <img
+                        src={`${process.env.REACT_APP_URL}/api/house/getImage/${objectId}/1`}
+                        alt=""
+                      />
+                    )}
+                  </div>
+
+                  <div className="secondImageBox">
+                    <IoMdPhotos className="logo" />
+                    <input
+                      onChange={uploadImage}
+                      type="file"
+                      class="file_upload"
+                    />
+                    {imageViewer > 2 && (
+                      <img
+                        src={`${process.env.REACT_APP_URL}/api/house/getImage/${objectId}/2`}
+                        alt=""
+                      />
+                    )}
+                  </div>
+                </div>
+                <div className="subWrapperBottom">
+                  <div className="thirdImageBox">
+                    <IoMdPhotos className="logo" />
+                    <input
+                      onChange={uploadImage}
+                      type="file"
+                      class="file_upload"
+                    />
+                    {imageViewer > 3 && (
+                      <img
+                        src={`${process.env.REACT_APP_URL}/api/house/getImage/${objectId}/3`}
+                        alt=""
+                      />
+                    )}
+                  </div>
+
+                  <div className="fourthImageBox">
+                    <IoMdPhotos className="logo" />
+                    <input
+                      onChange={uploadImage}
+                      type="file"
+                      class="file_upload"
+                    />
+                    {imageViewer > 4 && (
+                      <img
+                        src={`${process.env.REACT_APP_URL}/api/house/getImage/${objectId}/4`}
+                        alt=""
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <div className="subMainRightBottom">

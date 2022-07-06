@@ -1,26 +1,48 @@
 import React, { useState, useRef, useContext, useEffect } from 'react';
 import "./LegalName.scss"
 import { profileContext } from '../../../Context/ProfileContext';
+import { loginContext } from '../../../Context/LoginContext';
+import axios from "axios"
 
 export default function LegalName() {
   const { legalName, setLegalName } = useContext(profileContext)
-  console.log(legalName)
-  let menuRef = useRef()
-
-
-  useEffect(() => {
-    document.addEventListener("mousedown", (e) => {
-        if(!menuRef.current.contains(e.target))
-        setLegalName(false)
-        console.log("insid useEffect")
-    })
-}, [legalName])
+  const { activeUser, setActiveUser } = useContext(loginContext)
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
   
+  const clickHandler = (e) => {
+    
+    const temporaryUser = {...activeUser}
+    temporaryUser.firstName = firstName
+    temporaryUser.lastName = lastName
+    console.log("temp user" , temporaryUser)
+
+    const payload = {
+      firstName: firstName,
+      lastName: lastName
+  }
   
-  return(
+  const url = `${process.env.REACT_APP_URL}/api/user/` + activeUser._id
+          const config ={
+              method: 'PATCH',
+              headers: {
+                  'Content-Type':'application/json',
+                  'Authorization': 'bearer ' + activeUser.token
+              },
+              body: JSON.stringify(payload)
+          }
+          fetch(url, config)//make try catch.......................
+              .then(response => response.json())
+              .then(data => { setActiveUser(temporaryUser)})
+
+              setLegalName(false)
+
+  }
+  
+  return (
     
     <div className="LegalName">
-      <div className="modalBodey" ref={menuRef}>
+      <div className="modalBodey" >
           <div className="topContaine">
             <div className="topElements">
               <h5>Legal name</h5>
@@ -30,10 +52,10 @@ export default function LegalName() {
                or a passport.</p>
           </div>
           <form id="form">
-            <input className="inputLegalName" type="text" placeholder="First name" />
-            <input className="inputLegalName" type="text" placeholder="Last name" />
+            <input className="inputLegalName" type="text" placeholder="First name" value={firstName} onChange={e => setFirstName(e.target.value)} />
+            <input className="inputLegalName" type="text" placeholder="Last name" value={lastName} onChange={e=> setLastName(e.target.value)} />
           </form>
-          <button className="buttonLegalName">Save</button>
+          <button className="buttonLegalName" onClick={ e => clickHandler(e)} >Save</button>
       </div>
     </div>
   )

@@ -2,14 +2,17 @@ import "./hostingPage2.scss";
 import { FaMapMarkerAlt, FaLocationArrow } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import MapContainer from "../../../components/HousesComponents/MapContainer.jsx";
-import { useState } from "react";
+import { housesContext } from "../../../Context/HousesContext.jsx";
+import { useState, useRef, useContext } from "react";
 import Geocode from "react-geocode";
 
 export default function HostingPage2() {
-  const [currentAddress, setCurrentAddress] = useState(null);
+  let addressObject = {};
   const [showAddressForm, setShowAddressForm] = useState(false);
 
   let navigate = useNavigate();
+  const addressRef = useRef();
+  const { updateHouse } = useContext(housesContext);
 
   function addAddress() {
     Geocode.setApiKey(process.env.REACT_APP_GOOGLE_API_KEY);
@@ -17,32 +20,59 @@ export default function HostingPage2() {
     Geocode.setLocationType("ROOFTOP");
     Geocode.enableDebug();
 
-    // navigator.geolocation.getCurrentPosition((position) => {
-      window.navigator.geolocation.getCurrentPosition((position) => {
-      Geocode.fromLatLng(
-        position.coords.latitude,
-        position.coords.longitude
-      ).then(
-        (response) => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      Geocode.fromLatLng(position.coords.latitude, position.coords.longitude)
+        .then((response) => {
           const address = response.results[0].formatted_address;
-          setCurrentAddress(address);
-          console.log("Current location address-->", address);
-        },
-        (error) => {
-          console.error(error);
-        }
-      )
+          addressRef.current.value = address;
+        })
+        .catch((err) => console.log(err));
     })
+  }
 
-    Geocode.fromAddress("Soldiner Str. 36, 13359 Berlin, Germany").then(
-      (response) => {
+  const next = () => {
+    let updatedAddress = addressRef.current.value;
+    
+    Geocode.setApiKey(process.env.REACT_APP_GOOGLE_API_KEY);
+    Geocode.fromAddress(addressRef.current.value)
+      .then((response) => {
         const { lat, lng } = response.results[0].geometry.location;
         console.log("Current location lat & lng -->", lat, lng);
-      },
-      (error) => {
+
+        Geocode.fromLatLng(lat, lng).then((response) => {
+          let city, country;
+          for ( let i = 0; i < response.results[0].address_components.length; i++) {
+            for ( let j = 0; j < response.results[0].address_components[i].types.length; j++) {
+              // eslint-disable-next-line default-case
+              switch (response.results[0].address_components[i].types[j]) {
+                case "locality":
+                  city = response.results[0].address_components[i].long_name;
+                  break;
+                case "country":
+                  country = response.results[0].address_components[i].long_name;
+                  break;
+              }
+            }
+          }
+
+          addressObject = {
+            address: {
+              city,
+              country,
+              lat: lat,
+              long: lng,
+              formattedAddress: updatedAddress
+            }
+          }
+
+          updateHouse(addressObject);
+          console.log("addressObject :>> ", addressObject);
+          navigate("../hostingPage3", { replace: true });
+        })
+      })
+      .catch((error) => {
         console.error(error);
-      }
-    )
+      })
   }
 
   return (
@@ -58,8 +88,7 @@ export default function HostingPage2() {
             <FaMapMarkerAlt />
 
             <input
-              onClick={() => setCurrentAddress(null)}
-              value={currentAddress}
+              ref={addressRef}
               type="text"
               placeholder="Enter your address"
             />
@@ -71,8 +100,7 @@ export default function HostingPage2() {
                 className="addAddressManually"
                 onClick={() => setShowAddressForm(true)}
               >
-                {" "}
-                Add manually{" "}
+                Add manually
               </button>
 
               {showAddressForm && (
@@ -83,13 +111,13 @@ export default function HostingPage2() {
                       onClick={() => setShowAddressForm(false)}
                     >
                       x
-                    </button>{" "}
+                    </button>
                     <br />
                     <input type="text" placeholder="Street" /> <br />
                     <input
                       type="text"
                       placeholder="Apt, house, etc. (Optional)"
-                    />{" "}
+                    />
                     <br />
                     <input type="text" placeholder="City" /> <br />
                     <input type="text" placeholder="Zip code" /> <br />
@@ -111,15 +139,11 @@ export default function HostingPage2() {
               </button>
             </div>
             <div className="next">
-              <button
-                onClick={() => navigate("../hostingPage3", { replace: true })}
-              >
-                Next
-              </button>
+              <button onClick={next}>Next</button>
             </div>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

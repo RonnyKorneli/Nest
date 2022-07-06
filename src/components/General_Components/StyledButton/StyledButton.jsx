@@ -1,8 +1,8 @@
 import "./StyledButton.scss";
-export const StyledButton = ({text})=>{
+export const StyledButton = ({text,onClick})=>{
     return (
-        <div className=" flex justify-start mb-10 mt-5">
-            <input type="button" value={text}/>
+        <div className="button-container">
+            <input onClick={()=>onClick()} type="button" value={text}/>
         </div>
     )
 }

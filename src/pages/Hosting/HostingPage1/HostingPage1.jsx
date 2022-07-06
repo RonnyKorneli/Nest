@@ -1,8 +1,35 @@
 import "./hosting.scss";
 import { useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { housesContext } from "../../../Context/HousesContext.jsx";
+import { loginContext } from "../../../Context/LoginContext.jsx";
 
 export default function HostingPage1() {
   let navigate = useNavigate();
+  const [activeBorder, setActiveBorder] = useState(0);
+  const [typeOfPlace, setTypeOfPlace] = useState(" ");
+  const { createHouse } = useContext(housesContext);
+  const { activeUser } = useContext(loginContext);
+
+  const houseObject = {
+    hostID: activeUser._id,
+    typeOfPlace: typeOfPlace,
+    title: "Quiet and peaceful place",
+    description: "Beautiful place and good neighborhood",
+    guests: {
+      adult: 0,
+      kids: 0,
+      beds: 0,
+    },
+    conversations: [],
+    address: {}
+  };
+
+  const next = () => {
+    createHouse(houseObject);
+    navigate("../hostingPage2", { replace: true });
+  };
+
   return (
     <div className="hostingPage1">
       <div className="mainLeft">
@@ -10,7 +37,18 @@ export default function HostingPage1() {
       </div>
       <div className="mainRight">
         <div className="subMainRight">
-          <div className="subMainRightDiv">
+          <div
+            className="subMainRightDiv"
+            style={
+              activeBorder === 1
+                ? { background: "black", color: "white" }
+                : null
+            }
+            onClick={() => {
+              setTypeOfPlace("Apartment");
+              setActiveBorder(1);
+            }}
+          >
             <div className="leftWrapper">Apartment</div>
             <div className="apartmentImage">
               <img
@@ -21,7 +59,18 @@ export default function HostingPage1() {
             </div>
           </div>
 
-          <div className="subMainRightDiv">
+          <div
+            className="subMainRightDiv"
+            style={
+              activeBorder === 2
+                ? { background: "black", color: "white" }
+                : null
+            }
+            onClick={() => {
+              setTypeOfPlace("House");
+              setActiveBorder(2);
+            }}
+          >
             <div className="leftWrapper">House</div>
             <div className="apartmentImage">
               <img
@@ -32,7 +81,18 @@ export default function HostingPage1() {
             </div>
           </div>
 
-          <div className="subMainRightDiv">
+          <div
+            className="subMainRightDiv"
+            style={
+              activeBorder === 3
+                ? { background: "black", color: "white" }
+                : null
+            }
+            onClick={() => {
+              setTypeOfPlace("Private Room");
+              setActiveBorder(3);
+            }}
+          >
             <div className="leftWrapper">Private Room</div>
             <div className="apartmentImage">
               <img
@@ -43,7 +103,18 @@ export default function HostingPage1() {
             </div>
           </div>
 
-          <div className="subMainRightDiv">
+          <div
+            className="subMainRightDiv"
+            style={
+              activeBorder === 4
+                ? { background: "black", color: "white" }
+                : null
+            }
+            onClick={() => {
+              setTypeOfPlace("Shared Room");
+              setActiveBorder(4);
+            }}
+          >
             <div className="leftWrapper">Shared Room</div>
             <div className="apartmentImage">
               <img
@@ -54,7 +125,18 @@ export default function HostingPage1() {
             </div>
           </div>
 
-          <div className="subMainRightDiv">
+          <div
+            className="subMainRightDiv"
+            style={
+              activeBorder === 5
+                ? { background: "black", color: "white" }
+                : null
+            }
+            onClick={() => {
+              setTypeOfPlace("Attic");
+              setActiveBorder(5);
+            }}
+          >
             <div className="leftWrapper">Attic</div>
             <div className="apartmentImage">
               <img
@@ -73,11 +155,7 @@ export default function HostingPage1() {
               </button>
             </div>
             <div className="next">
-              <button
-                onClick={() => navigate("../hostingPage2", { replace: true })}
-              >
-                Next
-              </button>
+              <button onClick={next}>Next</button>
             </div>
           </div>
         </div>
