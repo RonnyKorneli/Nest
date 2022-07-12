@@ -2,6 +2,7 @@
 
 .review-container{
     margin-top: 2.5rem;
+    width: 75%;
     .review{
         display: flex;
         .img-container{
@@ -23,7 +24,8 @@
            }
            p{
                margin: 0;
-               @include sm-header;
+               font-size: 14px;
+               font-weight: lighter;
            }
         }
     }
@@ -50,11 +52,13 @@
     }
     .reviews{
         display: flex;
+        flex-wrap: wrap;
         justify-content: space-between;
-        flex-direction: column;
-        .reviews1, .reviews2{
-            width: 100%;
-        }
+        // justify-content: space-between;
+        // flex-direction: column;
+        // .reviews1, .reviews2{
+        //     width: 100%;
+        // }
     }
     .create-review-container{
         margin-bottom: 2rem;
@@ -66,6 +70,13 @@
             width: 100%;  
             margin-bottom: .5rem;         
         }
+        .stars-container{
+            display: flex;
+            .star{
+                cursor: pointer;
+                
+            }
+        }
         .save-button{
             @include sendButton;
             width: 8rem;
@@ -74,10 +85,10 @@
 }
 
 @media (min-width: 1024px) {
-    .reviews {
-        flex-direction: row !important;
-        .reviews1, .reviews2{
-            // width: 40%;
-        }
+    .review-container{
+        width: 45%;
     }
+    // .reviews {
+    //     flex-direction: row !important;
+    // }
 }

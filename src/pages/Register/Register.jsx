@@ -4,12 +4,14 @@ import InputRegister from "../../components/Register/InputRegister.jsx"
 import HostOrUser from "../../components/Register/HostOrUser/HostOrUser.jsx" 
 import { loginContext } from "../../Context/LoginContext.jsx"
 import { useContext, useState, useRef, useEffect } from "react";
+import FormikContainer from "../../components/Register/NewRegister/FormikContainer"
+import { Form } from "formik"
 
 
 export default function Register(){
 
     // Disable Modal by clicking outside............
-    const { register, setRegister, registerFunction } = useContext(loginContext)
+    const { register, setRegister, registerFunction, hostOrUser } = useContext(loginContext)
 
     let menuRef = useRef()
 
@@ -18,7 +20,7 @@ export default function Register(){
             if(!menuRef?.current?.contains(e.target))
             setRegister(false)
         })
-    }, [register])
+    })
     ////////////////////////////////////////////////////
 
 
@@ -30,25 +32,16 @@ export default function Register(){
             </div>
 
             <div className="WelcomeToNest">Welcome to NEST</div>
-            <div className="selectHostAndUser"> <HostOrUser /> </div>
-
+            
+            <div className="selectHostAndUser"> 
+               {/*  <HostOrUser /> */}
+            </div>
+            
             <div className="userNameAndPassword">
-                <InputRegister />
+                {/* <InputRegister /> */}
+                <FormikContainer />
             </div>
             
-            <div className="privacyPolicy">
-                <p> We`ll call or text you to confirm your number. 
-                    Standard message and data rates apply. 
-                    <a href=""> Privacy Policy</a> 
-                </p>
-            </div>
-
-            <button className="ContinueButton" type="submit" onClick={e =>{setRegister(false); registerFunction()}}>Continue</button>
-            
-            <div className="leftLine"></div> 
-            <div className="or">or</div> 
-            <div className="rightLine"></div>
-
             <div className="buttonFacebook">
                 <FacebookButton />
             </div>

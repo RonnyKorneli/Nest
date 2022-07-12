@@ -11,7 +11,10 @@ export default function HousesContextProvider(props){
     const [activeCity,setActiveCity] = useState(activeCityInLocalStorage || {country:"DE", name:"Berlin", lat:52.52437, lng:13.41053});
     const [activeHouses,setActiveHouses] = useState([]);
     const [pageNumber, setPageNumber] = useState(1);
+    const [typeOfPlace,setTypeOfPlace] =useState(null);
     const [houseCount,setHouseCount] = useState(0);
+
+    const [filteredHouses, setFilteredHouses] =useState(activeHouses);
 
     const createHouse = (houseObject)=>{
         console.log("createHouse");
@@ -35,17 +38,19 @@ export default function HousesContextProvider(props){
     }
 
     const getHousesByCity = ()=>{
-        axios.get(`${process.env.REACT_APP_URL}/api/house/getCity/${activeCity.name}?pageNumber=${pageNumber}&nPerPage=5`)
+        console.log('activeCity :>> ',activeCity);
+        axios.get(`${process.env.REACT_APP_URL}/api/house/getCity/${activeCity.name}?pageNumber=${pageNumber}&nPerPage=5&typeOfPlace=${typeOfPlace}`)
         .then(res=>{
-            console.log('res.data :>> ', res.data)
+            console.log('activeHouses :>> ', res.data)
             setActiveHouses(res.data.houseList);
+            setFilteredHouses(res.data.houseList)
             setHouseCount(res.data.houseCount);   
         })
         .catch(err=>console.log('err :>> ', err))
     }
 
     const housesVariable={createHouse, updateHouse, houseId, activeCity, setActiveCity, getHousesByCity, setActiveHouses, activeHouses
-    ,houseCount, pageNumber, setPageNumber}
+    ,houseCount, pageNumber, setPageNumber, setHouseCount, filteredHouses, setFilteredHouses, setTypeOfPlace, typeOfPlace}
   
     return(
         <housesContext.Provider value={housesVariable}>

@@ -7,14 +7,70 @@ import MapContainer from "../../components/HousesComponents/MapContainer.jsx";
 import HouseCarousel from "../../components/HousesComponents/HouseCarousel/HouseCarousel.jsx";
 import { housesContext } from "../../Context/HousesContext.jsx";
 import HousesPagination from "../../components/HousesComponents/Pagination/Pagination.jsx";
+import axios from "axios";
 
 const Houses = () => {
   const [filter, setFilter] = useState(false);
-  const { activeHouses, getHousesByCity, pageNumber} = useContext(housesContext);
+  const {
+    setActiveHouses,
+    setHouseCount,
+    houseCount,
+    activeCity,
+    activeHouses,
+    getHousesByCity,
+    pageNumber,
+    setFilteredHouses,
+    filteredHouses,
+    setTypeOfPlace,
+    typeOfPlace
+  } = useContext(housesContext);
+  // const [selectedPlace, setSelectedPlace] = useState("");
 
   useEffect(() => {
     getHousesByCity();
-  }, [pageNumber]);
+    console.log('typeOfPlace :>> ', typeOfPlace);
+  }, [pageNumber, typeOfPlace]);
+
+  // useEffect(() => {
+  //   axios
+  //     .get(
+  //       `${process.env.REACT_APP_URL}/api/house/getPrivateRoom/${activeCity.name}/${selectedPlace}`
+  //     )
+  //     .then((res) => {
+  //       console.log("res.data :>> ", res.data);
+  //       setActiveHouses(res.data);
+  //       setHouseCount(res.data.length);
+  //     })
+  //     .catch((err) => console.log("err :>> ", err));
+  // }, [selectedPlace]);
+
+  // todo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  //useEffect( ()  => {
+  // const  filteredHouseobj = activeHouses.filter(item => item.typeOfPlace === selectedPlace)
+  //
+  //  setFilteredHouses(filteredHouseobj)
+//
+  // 
+  //console.log('filteredHouse :>> ', filteredHouseobj);
+//
+  //}, [selectedPlace]);
+
+//   function filteredHouse (e) {
+//    const filteredHouse = activeHouses.filter(item => item.typeOfPlace === e)
+//  setSelectedPlace(filteredHouse)
+// console.log('filteredHouse :>> ', filteredHouse);
+
+//   }
+
+const filterByType=(selectedPlace)=>{
+
+  // const  filteredHouseobj = activeHouses.filter(item => item.typeOfPlace === selectedPlace)
+  
+  // setFilteredHouses(filteredHouseobj)
+  setTypeOfPlace(selectedPlace);
+}
+
+
   return (
     <div className="Houses">
       <nav>
@@ -30,20 +86,30 @@ const Houses = () => {
         </div>
 
         <div className="NavWrapper">
-          <div className="subWrapper mediaScreenMax690">
+          <div
+            className="subWrapper mediaScreenMax690"
+            onClick={(e) => filterByType("Shared Room")}
+          >
             <p>Shared room</p>
           </div>
-          <div className="subWrapper mediaScreenMax690">
+          <div
+            className="subWrapper mediaScreenMax690"
+            onClick={(e) => filterByType("Private Room")}
+          >
             <p>Private room</p>
           </div>
-          <div className="subWrapper mediaScreenMax885">
+          <div
+            className="subWrapper mediaScreenMax885"
+            onClick={ (e) => filterByType("Apartment")}>
             <p>Apartment</p>
           </div>
-          <div className="subWrapper mediaScreenMax885">
+          <div className="subWrapper mediaScreenMax885"
+          onClick={ (e) => filterByType("House")}>
             <p>House</p>
           </div>
-          <div className="subWrapper mediaScreenMax1200">
-            <p>Male</p>
+          <div className="subWrapper mediaScreenMax1200"
+          onClick={ (e) => filterByType("Attic")}>
+            <p>Attic</p>
           </div>
           <div className="subWrapper mediaScreenMax1200">
             <p>Female</p>
@@ -81,7 +147,7 @@ const Houses = () => {
           {activeHouses.map((house) => (
             <HouseCarousel house={house} />
           ))}
-          <HousesPagination/>
+          <HousesPagination />
         </section>
 
         <section className="rightSection">

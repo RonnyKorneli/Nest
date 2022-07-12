@@ -1,22 +1,23 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Carousel } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { FaStar, FaHeart } from "react-icons/fa";
 import { houseContext } from "../../../Context/HouseContext.jsx";
 
 const HouseCarousel = ({ house }) => {
-  const { setHouse } = useContext(houseContext);
+  const { setActiveHouseId, activeHouseId } = useContext(houseContext);
+
 
   let navigate = useNavigate();
 
   const houseClickHandler = () => {
-    setHouse(house);
+    console.log('house._id :>> ', house._id);
+    setActiveHouseId(house._id);
     navigate("/House");
   };
 
   const objToArray = house?.amenities && Object.entries(house.amenities);
-  const filterAmenities =
-    objToArray && objToArray.filter((item) => item[1] === true);
+  const filterAmenities = objToArray && objToArray.filter((item) => item[1] === true);
 
 
   return (
@@ -34,29 +35,27 @@ const HouseCarousel = ({ house }) => {
       </Carousel>
 
       <div className="divInsideSubSection">
-        <div>
-          <p>{house.title}</p>
-          <h6>{house.description}</h6>
-          <div className="DrawLine"></div>
-          <p className="leftSubSectionLastParagraph">
-            <strong>Guest: </strong>
-            Adult: {house.guests.adult},
-            Kids: {house.guests.kids}, 
-            Beds: {house.guests.beds},
-            Bedrooms: {house.guests.bedrooms}
-          </p>
-          <p className="leftSubSectionLastParagraph">
-          <strong>Amenities: </strong>
-          {filterAmenities && filterAmenities.map((item) => ( <span>{item[0]} </span> ))}
-          </p>
-        </div>
+        <h6>{house.typeOfPlace}</h6>
+        <div className="DrawLine"></div>
+        <p>{house.title}</p>
+        <p className="description">{house.description}</p>
+        <p>
+          <span className="guests">Guest: </span>
+          Adult: {house.guests.adult}, Kids: {house.guests.kids}, Beds:{" "}
+          {house.guests.beds}, Bedrooms: {house.guests.bedrooms}
+        </p>
+        <p>
+          <span className="amenities">Amenities: </span>
+          {filterAmenities &&
+            filterAmenities.map((item) => <span>{item[0]} </span>)}
+        </p>
 
-        <div>
+        <p>
           <FaStar className="FaStar" />
-          <strong> 4.75</strong> (200 reviews)
-        </div>
+          <span className="review"> 4.75</span> (200 reviews)
+        </p>
+        <FaHeart className="FaHeart" />
       </div>
-      <FaHeart className="FaHeart" />
     </div>
   );
 };

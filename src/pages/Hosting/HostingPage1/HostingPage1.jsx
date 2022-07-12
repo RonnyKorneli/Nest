@@ -1,28 +1,29 @@
+import "../../../../src/mixin.scss";
 import "./hosting.scss";
 import { useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { housesContext } from "../../../Context/HousesContext.jsx";
 import { loginContext } from "../../../Context/LoginContext.jsx";
 
-export default function HostingPage1() {
+export default function HostingPage1(props) {
   let navigate = useNavigate();
   const [activeBorder, setActiveBorder] = useState(0);
-  const [typeOfPlace, setTypeOfPlace] = useState(" ");
+  const [typeOfPlace, setTypeOfPlace] = useState("");
   const { createHouse } = useContext(housesContext);
   const { activeUser } = useContext(loginContext);
 
   const houseObject = {
     hostID: activeUser._id,
     typeOfPlace: typeOfPlace,
-    title: "Quiet and peaceful place",
-    description: "Beautiful place and good neighborhood",
+    title: " ",
+    description: " ",
     guests: {
       adult: 0,
       kids: 0,
       beds: 0,
     },
     conversations: [],
-    address: {}
+    address: {},
   };
 
   const next = () => {
@@ -41,7 +42,7 @@ export default function HostingPage1() {
             className="subMainRightDiv"
             style={
               activeBorder === 1
-                ? { background: "black", color: "white" }
+                ? {border: "2px solid  black"}
                 : null
             }
             onClick={() => {
@@ -63,7 +64,7 @@ export default function HostingPage1() {
             className="subMainRightDiv"
             style={
               activeBorder === 2
-                ? { background: "black", color: "white" }
+                ? {border: "2px solid  black"}
                 : null
             }
             onClick={() => {
@@ -85,7 +86,7 @@ export default function HostingPage1() {
             className="subMainRightDiv"
             style={
               activeBorder === 3
-                ? { background: "black", color: "white" }
+                ? {border: "2px solid  black"}
                 : null
             }
             onClick={() => {
@@ -107,7 +108,7 @@ export default function HostingPage1() {
             className="subMainRightDiv"
             style={
               activeBorder === 4
-                ? { background: "black", color: "white" }
+                ? {border: "2px solid  black"}
                 : null
             }
             onClick={() => {
@@ -129,7 +130,7 @@ export default function HostingPage1() {
             className="subMainRightDiv"
             style={
               activeBorder === 5
-                ? { background: "black", color: "white" }
+                ? {border: "2px solid  black"}
                 : null
             }
             onClick={() => {
@@ -154,7 +155,12 @@ export default function HostingPage1() {
                 <u>Back</u>
               </button>
             </div>
-            <div className="next">
+            <div
+              className="next"
+              style={
+                typeOfPlace ? { opacity: 1 } : { opacity: ".25", zIndex: -1 }
+              }
+            >
               <button onClick={next}>Next</button>
             </div>
           </div>

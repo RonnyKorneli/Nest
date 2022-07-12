@@ -1,59 +1,110 @@
-import { useRef } from 'react';
+import { useRef, useContext, useState } from 'react';
 import { AiTwotoneStar } from 'react-icons/ai';
 import {StyledButton} from "../../General_Components";
+import { houseContext } from '../../../Context/HouseContext.jsx';
+import { loginContext } from '../../../Context/LoginContext.jsx';
 import "./Reviews.scss";
 
 
-const Review = ({src})=>{
+const Review = ({reviewItem})=>{
     return(
         <div className='review-container'>
             <div className='review'>
                 <div className='img-container'>
-                    <img src={src} alt="Avatar"/>
+                    {/* todo: we can add profile picture, or from a website random pictures */}
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkpclgdZQ3ZHBh6xTt4wlROP30NE_GY7MdVw&usqp=CAU" alt="Avatar"/>
                 </div>
                 <div className='text'>
-                    <h4>Alex</h4>
-                    <p>April 2022</p>
+                    {/* todo: show the name and lastname
+                     <h4>{reviewItem.authorId.firstName} {reviewItem.authorId.lastName}</h4> */}
+                     <h4>{reviewItem.authorId.loginInfo.email}</h4>
+                    <p>{new Date(reviewItem.createdAt).toLocaleString('default', { month: 'long' })} {new Date(reviewItem.createdAt).getFullYear()}</p>
                 </div>
             </div>
-            <p>Super Laden he</p>
+            <p>{reviewItem.text}</p>
         </div>
     )
 }
 
 export const Reviews = () =>{
+
+    const {createReview, house, setHouse, updateHouse} = useContext(houseContext);
+    const {activeUser} = useContext(loginContext);
+    const [starIndex, setStarIndex] = useState(1);
+
     const reviewText = useRef();
     const sendReview = ()=>{
-        console.log('reviewText :>> ', reviewText.current.value);
-        //todo: save 
+        const reviewObj = {
+            authorId:activeUser._id,
+            houseId:house._id,
+            rate:starIndex,
+            text:reviewText.current.value
+        }
+        console.log('reviewObj :>> ', reviewObj);
+        createReview(reviewObj);
+        
+        // added last review to the state to see it directly
+        const tempReviewObj ={
+            authorId:{
+                _id:activeUser._id,
+                loginInfo:{
+                    email:activeUser?.loginInfo?.email
+                }
+            },
+            createdAt : Date.now(),
+            houseId:house._id,
+            rate:starIndex,
+            text:reviewText.current.value
+        };
+        console.log('tempReviewObj :>> ', tempReviewObj);
+        const tempHouse = {...house};
+        tempHouse.reviews.push(tempReviewObj);
+        
+        // const totalRate = tempHouse.reviews.reduce((total, item) => total+ Number(item.rate),0)
+        // const houseRating = totalRate/tempHouse.reviews.length;
+        
+        // update the rating of the house in db
+        const ratedHouse = {...house}
+        ratedHouse.rating=((tempHouse?.reviews?.reduce((total, item) => total+ Number(item.rate),0))/house?.reviews?.length).toFixed(1);
+        updateHouse(ratedHouse);
+
+        setHouse(tempHouse);
+       
         reviewText.current.value="";
+        setStarIndex(1);
+
     }
 
+    const starClickHandler = (index)=>{
+        console.log('index :>> ', index);
+        setStarIndex(index+1);
+    }
     return(
         <div className="reviews-container">
             <div>
                 <div className='header'>
                     <AiTwotoneStar className='icon'/>
-                    <h1 >4.57 ( 455 reviews )</h1>
+                    <h1 >{house?.reviews?.length >0 ? ((house?.reviews?.reduce((total, item) => total+ Number(item.rate),0))/house?.reviews?.length).toFixed(1) :null} ( {house?.reviews?.length} reviews )</h1>
                 </div>
             </div>
             <div className='reviews'>
-                <div className='reviews1'>
-                    <Review src={'https://a0.muscache.com/im/pictures/user/c3cf9d2b-0e00-4235-a698-689e23eaa995.jpg?im_w=240'}/>
-                    <Review src={"https://a0.muscache.com/im/pictures/user/a8476f49-1458-46a5-9978-bbe831632ed3.jpg?im_w=240"}/>
-                    <Review src={"https://a0.muscache.com/im/pictures/user/16922f48-08ab-4d18-89ae-41548e02f6e3.jpg?im_w=240"}/>
-                </div>
-                <div className='reviews1'>
-                    <Review src={"https://a0.muscache.com/im/pictures/user/11370ce4-0557-4d31-848d-4c84a7f3a12d.jpg?im_w=240"}/>
-                    <Review src={"https://a0.muscache.com/defaults/user_pic-225x225.png?im_w=240"}/>
-                    <Review src={"https://a0.muscache.com/im/pictures/user/fdf72bfb-16fa-44d3-8466-54ca6f46a08d.jpg?im_w=240"}/>
-                </div>
+                {house?.reviews?.map((reviewItem, index)=>{
+                    if (index > 5) return;
+                    // <Review src={'https://a0.muscache.com/im/pictures/user/c3cf9d2b-0e00-4235-a698-689e23eaa995.jpg?im_w=240'}/>
+                    return <Review reviewItem={reviewItem}/>
+                })}
             </div>
-            <StyledButton text={`Show all 455 reviews`}/>
-            <div className='create-review-container'>
+            {house?.reviews?.length > 6 ? <StyledButton text={`Show all ${house.reviews.length} reviews`}/> : null}
+            
+            {activeUser?.role ==="user" ? <div className='create-review-container'>
                 <textarea ref={reviewText} placeholder='write your review...' rows={5} />
+                <div className='stars-container'>
+                    {Array(5).fill().map((_, index)=>
+                        <AiTwotoneStar className='star' onMouseOver={()=>starClickHandler(index)} style={starIndex>index ? {color: "red"}:{color:"black"}}/>
+                    )}
+                </div>
                 <input  onClick={sendReview} className='save-button' type="button" value="Save"/>
-            </div>
+            </div>:null}
         </div>
     )
 }
