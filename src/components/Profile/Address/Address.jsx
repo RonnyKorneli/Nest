@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef, useContext, useEffect } from 'react';
+import React, { useMemo, useState, useContext } from 'react';
 import { profileContext } from '../../../Context/ProfileContext';
 import { loginContext } from '../../../Context/LoginContext';
 import "./Address.scss"
@@ -8,33 +8,41 @@ import countryList from 'react-select-country-list'
 
 
 export default function Address() {
+
+
+ 
   const { address, setAddress } = useContext(profileContext)
+
   const { activeUser, setActiveUser } = useContext(loginContext)
 
-  const [country, setCountry] = useState('')
+  const [country, setCountry] = useState("")
+  const options = useMemo(() => countryList().getData(), [])
   const [street, setStreet] = useState("")
   const [houseNumber, setHouseNumber] = useState("")
   const [zip, setZip] = useState("")
   const [city, setCity] = useState("")
-  const options = useMemo(() => countryList().getData(), [])
 
-  console.log('active User Addres.jsx  :>> ', activeUser );
-  console.log("this typeof country", typeof country)
+  console.log('active User Addres.jsx  :>> ', street );
+  console.log("this country",  country)
   
   // Belongs to the react-select-country-list................
-  const changeHandler = country => {
-    setCountry(country)
-  }
 ///////////////////////////////////////////////////////////////
+
+const changeHandler = country => {
+  console.log("changeHandler----------------")
+  setCountry(country)
+}
+
+const temporaryUser = {...activeUser}
+console.log(temporaryUser)
 
 const clickHandler = (e) => {
 
   const temporaryUser = {...activeUser}
-    temporaryUser.country = country
-    temporaryUser.street = street
-    temporaryUser.houseNumber = houseNumber
-    temporaryUser.zip = zip
-    temporaryUser.city = city
+  temporaryUser.address = { country,street,houseNumber,zip,city }
+  console.log('country :>> ', country);
+
+    console.log("this uis temp +++++++++++++++##++++++++++ ", temporaryUser)
 
   const payload = {
    address : {
@@ -56,7 +64,9 @@ const clickHandler = (e) => {
         }
         fetch(url, config)
             .then(response => response.json())
-            .then(data => setActiveUser(temporaryUser))
+            .then(data => {setActiveUser(temporaryUser)
+              console.log("+++++++++++++++++++++++++",data)
+            })
 
         setAddress(false)
 }
