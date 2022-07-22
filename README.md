@@ -1,3 +1,4 @@
+#### Hi we are Nest, three developers with different backgrounds.
 #### Here you can follow our Final Project. 
 #### The Project is still very much a work in Progress.
 #### We organize our workflow by creating tickets in the Jira software.
@@ -62,7 +63,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/a
 
 ### Making a Progressive Web App
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)http://34.76.19.123:3007
 
 ### Advanced Configuration
 
